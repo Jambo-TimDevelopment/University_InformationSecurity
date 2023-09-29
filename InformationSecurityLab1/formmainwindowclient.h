@@ -1,10 +1,11 @@
 #ifndef FORMMAINWINDOWCLIENT_H
 #define FORMMAINWINDOWCLIENT_H
-
+#pragma once
 #include <QMainWindow>
 
-namespace Ui {
-class FormMainWindowClient;
+namespace Ui
+{
+    class FormMainWindowClient;
 }
 
 class FormMainWindowClient : public QMainWindow
@@ -12,7 +13,7 @@ class FormMainWindowClient : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit FormMainWindowClient(QWidget *parent = nullptr);
+    explicit FormMainWindowClient(QWidget* parent = nullptr);
     ~FormMainWindowClient();
 
 private slots:
@@ -21,7 +22,7 @@ private slots:
     void on_actionChange_pass_triggered();
 
 private:
-    Ui::FormMainWindowClient *ui;
+    Ui::FormMainWindowClient* ui;
 };
 
 #endif // FORMMAINWINDOWCLIENT_H

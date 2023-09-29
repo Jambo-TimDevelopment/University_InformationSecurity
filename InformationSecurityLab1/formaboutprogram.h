@@ -1,10 +1,11 @@
 #ifndef FORMABOUTPROGRAM_H
 #define FORMABOUTPROGRAM_H
-
+#pragma once
 #include <QDialog>
 
-namespace Ui {
-class FormAboutProgram;
+namespace Ui
+{
+    class FormAboutProgram;
 }
 
 class FormAboutProgram : public QDialog
@@ -12,11 +13,11 @@ class FormAboutProgram : public QDialog
     Q_OBJECT
 
 public:
-    explicit FormAboutProgram(QWidget *parent = nullptr);
+    explicit FormAboutProgram(QWidget* parent = nullptr);
     ~FormAboutProgram();
 
 private:
-    Ui::FormAboutProgram *ui;
+    Ui::FormAboutProgram* ui;
 };
 
 #endif // FORMABOUTPROGRAM_H

@@ -1,45 +1,22 @@
 #ifndef USERSERVICE_H
 #define USERSERVICE_H
-
+#pragma once
 #include <QString>
-
-
 
 class UserService
 {
 public:
-    UserService();
+    static bool IsAdmin(QString login) { return login == "ADMIN"; }
 
-    bool IsAdmin(QString login) { return login == "ADMIN"; }
+    static bool SetNewPassword(QString newPassword);
 
-    QString SetNewPassword(QString plainPassword)
-        {
-        return "";
-            //return Hash(plainPassword);
-        }
+    static bool CheckPassword(QString password, QString oldPassword);
 
-    bool CheckPassword(QString password, QString oldPassword)
-        {
-            return false;
-            //return Hash(oldPassword) == password;
-        }
+public:
+    static bool VerifyPassword(QString password);
 
-    public:
-        bool VerifyPassword(QString password)
-        {
-            return false;
-            //Regex regex = new Regex(@".*([A-zА-я]+).*|.*([-.?!,:()]+).*");
-            //return regex.IsMatch(password);
-        }
-
-    private:
-        QString Hash(QString password)
-        {
-            return "";
-            //byte[] bytes = Encoding.ASCII.GetBytes(password);
-            //byte[] hashBytes = DigestUtilities.CalculateDigest("MD5", bytes);
-            //return Hex.ToHexString(hashBytes);
-        }
+private:
+    static QString Hash(QString password);
 };
 
 #endif // USERSERVICE_H

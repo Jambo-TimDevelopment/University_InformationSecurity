@@ -21,6 +21,7 @@ SOURCES += \
     userservice.cpp
 
 HEADERS += \
+    Utilities.h \
     fileservice.h \
     formaboutprogram.h \
     formauthorisation.h \

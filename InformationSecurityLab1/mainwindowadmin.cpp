@@ -5,13 +5,13 @@
 #include "formuserlist.h"
 #include <QDebug>
 
-MainWindowAdmin::MainWindowAdmin(QWidget *parent)
+MainWindowAdmin::MainWindowAdmin(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     setWindowTitle("IS Lab1");
-    //setStyleSheet("background-color: green");
+    // setStyleSheet("background-color: green");
 }
 
 MainWindowAdmin::~MainWindowAdmin()
@@ -22,7 +22,7 @@ MainWindowAdmin::~MainWindowAdmin()
 void MainWindowAdmin::on_pushButton_submit_clicked()
 {
     qDebug() << "Submiting data..";
-   // qDebug() << "Pass phrase is: " << ui->line_pass->text();
+    // qDebug() << "Pass phrase is: " << ui->line_pass->text();
 }
 
 void MainWindowAdmin::on_actionAbout_triggered()
@@ -45,4 +45,3 @@ void MainWindowAdmin::on_actionChange_pass_triggered()
     formChangePass->setModal(true);
     formChangePass->show();
 }
-

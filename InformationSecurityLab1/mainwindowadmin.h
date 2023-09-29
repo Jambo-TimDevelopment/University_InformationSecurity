@@ -1,10 +1,13 @@
 #ifndef MAINWINDOWADMIN_H
 #define MAINWINDOWADMIN_H
-
+#pragma once
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui
+{
+    class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindowAdmin : public QMainWindow
@@ -12,7 +15,7 @@ class MainWindowAdmin : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindowAdmin(QWidget *parent = nullptr);
+    MainWindowAdmin(QWidget* parent = nullptr);
     ~MainWindowAdmin();
 
 private slots:
@@ -25,6 +28,6 @@ private slots:
     void on_actionChange_pass_triggered();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
 };
 #endif // MAINWINDOWADMIN_H

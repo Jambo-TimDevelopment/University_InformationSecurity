@@ -3,9 +3,8 @@
 #include "formchangepassword.h"
 #include "ui_formmainwindowclient.h"
 
-FormMainWindowClient::FormMainWindowClient(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::FormMainWindowClient)
+FormMainWindowClient::FormMainWindowClient(QWidget* parent)
+    : QMainWindow(parent), ui(new Ui::FormMainWindowClient)
 {
     ui->setupUi(this);
 }
@@ -22,11 +21,9 @@ void FormMainWindowClient::on_actionAbout_triggered()
     formAboutProgram->show();
 }
 
-
 void FormMainWindowClient::on_actionChange_pass_triggered()
 {
     FormChangePassword* formChangePass = new FormChangePassword(this);
     formChangePass->setModal(true);
     formChangePass->show();
 }
-

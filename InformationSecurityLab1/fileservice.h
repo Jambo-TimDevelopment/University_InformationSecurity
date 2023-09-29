@@ -1,6 +1,10 @@
 #ifndef FILESERVICE_H
 #define FILESERVICE_H
+#pragma once
+#include "Utilities.h"
 
+#include <userservice.h>
+#include <QFile>
 #include <QString>
 
 /**
@@ -13,8 +17,9 @@ class FileService
 public:
     FileService();
 
-private: QString userFilename = "users.dat";
-/*public List<User> LoadUsersFile(string passPhrase)
+public:
+    static QList<User> GetUsersFromFile(QString fileName, QString passPhrase);
+    /*List<User> LoadUsersFile(string passPhrase)
     {
         List<User> list = new List<User>();
         if (File.Exists(userFilename))
@@ -33,16 +38,22 @@ private: QString userFilename = "users.dat";
             list.Add(admin);
         }
         return list;
-    }
+    }*/
 
-public void SaveUsersFile(List<User> list, string passPhrase)
+    static User GetUserByName(QString name);
+
+    static void SaveUsersToFile(QString fileName, QList<User> list, QString passPhrase);
+
+    static QString ConverIserListToString(QList<User> userList);
+    /*void SaveUsersFile(List<User> list, string passPhrase)
     {
         byte[] bytes = SerializeUserList(list);
         byte[] encryptedBytes = EncodeData(bytes, passPhrase);
         File.WriteAllBytes(userFilename, encryptedBytes);
-    }
+    }*/
 
-private byte[] SerializeUserList(List<User> list)
+private:
+    /*byte[] SerializeUserList(List<User> list)
     {
         XmlSerializer bf = new XmlSerializer(list.GetType());
         MemoryStream ms = new MemoryStream();
@@ -50,15 +61,16 @@ private byte[] SerializeUserList(List<User> list)
         bf.Serialize(sw, list);
         sw.Flush();
         return ms.ToArray();
-    }
+    }*/
 
-private List<User> DeserializeUserList(byte[] bytes)
+    /*List<User> DeserializeUserList(byte[] bytes)
     {
         XmlSerializer bf = new XmlSerializer(new List<User>().GetType());
         MemoryStream ms = new MemoryStream(bytes);
         return (List<User>)bf.Deserialize(ms);
-    }
-private byte[] EncodeData(byte[] bytes, string passPhrase)
+    }*/
+
+    /*byte[] EncodeData(byte[] bytes, string passPhrase)
     {
         DES provider = CreateDESProvider(passPhrase);
         ICryptoTransform transform = provider.CreateEncryptor();
@@ -68,9 +80,9 @@ private byte[] EncodeData(byte[] bytes, string passPhrase)
         cryptoStream.Write(bytes, 0, bytes.Length);
         cryptoStream.FlushFinalBlock();
         return encryptedStream.ToArray();
-    }
+    }*/
 
-private byte[] DecodeData(byte[] encryptedBytes, string passPhrase)
+    /*byte[] DecodeData(byte[] encryptedBytes, string passPhrase)
     {
         DES provider = CreateDESProvider(passPhrase);
         ICryptoTransform transform = provider.CreateDecryptor();
@@ -80,9 +92,9 @@ private byte[] DecodeData(byte[] encryptedBytes, string passPhrase)
         cryptoStream.Write(encryptedBytes, 0, encryptedBytes.Length);
         cryptoStream.FlushFinalBlock();
         return decryptedStream.ToArray();
-    }
+    }*/
 
-private DES CreateDESProvider(string passPhrase)
+    /*DES CreateDESProvider(string passPhrase)
     {
         // Генерируем ключ из пароля при помощи алгоритма PBKDF2
         byte[] salt = new byte[] { 15, 93, 51, 19, 2, 76, 142, 13 };

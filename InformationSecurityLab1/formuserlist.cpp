@@ -12,3 +12,9 @@ FormUserList::~FormUserList()
 {
     delete ui;
 }
+
+void FormUserList::on_pushButton_AddNewUser_clicked()
+{
+
+}
+
