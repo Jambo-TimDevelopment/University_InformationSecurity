@@ -1,11 +1,11 @@
 #ifndef FILESERVICE_H
 #define FILESERVICE_H
 #pragma once
-#include "Utilities.h"
 
 #include <userservice.h>
 #include <QFile>
 #include <QString>
+#include <User.h>
 
 /**
  *  QCryptographicHash Class
@@ -43,8 +43,8 @@ public:
     static User GetUserByName(QString name);
 
     static void SaveUsersToFile(QString fileName, QList<User> list, QString passPhrase);
-
-    static QString ConverIserListToString(QList<User> userList);
+    
+    static QString ConverUserListToString(QList<User> userList);
     /*void SaveUsersFile(List<User> list, string passPhrase)
     {
         byte[] bytes = SerializeUserList(list);

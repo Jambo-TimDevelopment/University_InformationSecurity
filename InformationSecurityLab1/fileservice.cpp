@@ -1,3 +1,4 @@
+#include "Utilities.h"
 #include "fileservice.h"
 
 #include <QFile>
@@ -59,7 +60,7 @@ QList<User> FileService::GetUsersFromFile(QString fileName, QString passPhrase)
 
 User FileService::GetUserByName(QString name)
 {
-    QList<User> userList = GetUsersFromFile(SecurityManager::FILE_NAME_WITH_USERS, "");
+    QList<User> userList = GetUsersFromFile(SecurityManager().FILE_NAME_WITH_USERS, "");
 
     for (User user : userList)
     {
@@ -87,13 +88,13 @@ void FileService::SaveUsersToFile(QString fileName, QList<User> list, QString pa
     }
 
     // TODO make loading data to file
-    QString str = FileService::ConverIserListToString(list);
+    QString str = FileService::ConverUserListToString(list);
     QTextStream writeStream(&*fileWithUsers);
     writeStream << str;
     fileWithUsers->close();
 }
 
-QString FileService::ConverIserListToString(QList<User> userList)
+QString FileService::ConverUserListToString(QList<User> userList)
 {
     QString outString = "";
     for (User user : userList)

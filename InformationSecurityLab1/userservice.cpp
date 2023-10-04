@@ -8,15 +8,24 @@
 
 bool UserService::SetNewPassword(QString newPassword)
 {
-    for (User user : SecurityManager::USER_LIST)
+    SecurityManager* securityManager = new SecurityManager();
+    QList<User> newUserList = QList<User>(securityManager->USER_LIST.length());
+    int k = 0;
+    for (User user : securityManager->USER_LIST)
     {
-        if (user.Login == SecurityManager::USER_NAME)
+        newUserList[k].Login = user.Login;
+        newUserList[k].EncryptedPassword = user.EncryptedPassword;
+        newUserList[k].Blocked = user.Blocked;
+        newUserList[k].LimitPassword = user.LimitPassword;
+
+        if (user.Login == securityManager->USER_NAME)
         {
-            user.EncryptedPassword = UserService::Hash(newPassword);
+            newUserList[k].EncryptedPassword = UserService::Hash(newPassword);
             // TODO Save changed user list to file
-            FileService::SaveUsersToFile(SecurityManager::FILE_NAME_WITH_USERS, SecurityManager::USER_LIST, SecurityManager::PASS_PHRASE);
+            FileService::SaveUsersToFile(SecurityManager().FILE_NAME_WITH_USERS, newUserList, securityManager->PASS_PHRASE);
             return true;
         }
+        k++;
     }
 
     return false;
@@ -24,7 +33,8 @@ bool UserService::SetNewPassword(QString newPassword)
 
 bool UserService::CheckPassword(QString password, QString oldPassword)
 {
-    return UserService::Hash(password) == oldPassword;
+    QString hashOfEnterdPass = UserService::Hash(password);
+    return hashOfEnterdPass == oldPassword;
 }
 
 bool UserService::VerifyPassword(QString password)

@@ -21,12 +21,10 @@ PassPhrase::~PassPhrase()
 
 void PassPhrase::on_pushButton_submit_clicked()
 {
-    SecurityManager::PASS_PHRASE = ui->line_pass_phrase->text();
+    SecurityManager* securityManager = new SecurityManager();
+    securityManager->setPASS_PHRASE(ui->line_pass_phrase->text());
 
-    QList<User> userList = FileService::GetUsersFromFile(SecurityManager::FILE_NAME_WITH_USERS, ui->line_pass_phrase->text());
-    SecurityManager::USER_LIST = userList;
-
-    if (userList[0].Login != "ADMIN")
+    if (!securityManager->USER_LIST.empty() && securityManager->USER_LIST[0].Login != "ADMIN")
     {
         QMessageBox::critical(this, "Not valid pass phrase or user file is empty", "Not valid pass phrase or user file is empty");
         return;

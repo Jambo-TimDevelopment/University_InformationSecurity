@@ -1,7 +1,7 @@
 #include "formauthorisation.h"
 #include "Utilities.h"
 #include "formmainwindowclient.h"
-#include "mainwindowadmin.h"
+#include "formmainwindowadmin.h"
 #include "ui_formauthorisation.h"
 #include "userservice.h"
 
@@ -24,22 +24,24 @@ void FormAuthorisation::on_pushButton_enter_clicked()
 {
     // TODO load users from file and get user pass by user name, chek pass
     User foundUser = FileService::GetUserByName(ui->lineEdit_login->text());
-    SecurityManager::USER_NAME = ui->lineEdit_login->text();
-    SecurityManager::USER_PASS = ui->lineEdit_pass->text();
 
-    if (!UserService::CheckPassword(foundUser.EncryptedPassword, ui->lineEdit_pass->text())
+    if (!UserService::CheckPassword(ui->lineEdit_pass->text(), foundUser.EncryptedPassword)
         && !foundUser.EncryptedPassword.isEmpty())
     {
         QMessageBox::critical(this, "Not valid pass", "Not valid pass");
         return;
     }
 
+    SecurityManager* securityManager = new SecurityManager();
+    securityManager->setUSER_NAME(ui->lineEdit_login->text());
+    securityManager->setUSER_PASS(ui->lineEdit_pass->text());
+
     hide();
 
     if (UserService::IsAdmin(ui->lineEdit_login->text()))
     {
-        MainWindowAdmin* mainWindowAdmin = new MainWindowAdmin(this);
-        mainWindowAdmin->show();
+        FormMainWindowAdmin* formMainWindowAdmin = new FormMainWindowAdmin(this);
+        formMainWindowAdmin->show();
         return;
     }
 

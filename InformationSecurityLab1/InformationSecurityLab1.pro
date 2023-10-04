@@ -13,11 +13,12 @@ SOURCES += \
     formaboutprogram.cpp \
     formauthorisation.cpp \
     formchangepassword.cpp \
+    formmainwindowadmin.cpp \
     formmainwindowclient.cpp \
     formuserlist.cpp \
     main.cpp \
-    mainwindowadmin.cpp \
     passphrase.cpp \
+    user.cpp \
     userservice.cpp
 
 HEADERS += \
@@ -26,19 +27,20 @@ HEADERS += \
     formaboutprogram.h \
     formauthorisation.h \
     formchangepassword.h \
+    formmainwindowadmin.h \
     formmainwindowclient.h \
     formuserlist.h \
-    mainwindowadmin.h \
     passphrase.h \
+    user.h \
     userservice.h
 
 FORMS += \
     formaboutprogram.ui \
     formauthorisation.ui \
     formchangepassword.ui \
+    formmainwindowadmin.ui \
     formmainwindowclient.ui \
     formuserlist.ui \
-    mainwindowadmin.ui \
     passphrase.ui
 
 # Default rules for deployment.

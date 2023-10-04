@@ -1,6 +1,6 @@
 #ifndef FORMABOUTPROGRAM_H
 #define FORMABOUTPROGRAM_H
-#pragma once
+
 #include <QDialog>
 
 namespace Ui
