@@ -17,7 +17,7 @@ public:
     ~FormUserList();
 
 private slots:
-    void on_pushButton_AddNewUser_clicked();
+    void on_pushButton_clicked();
 
 private:
     Ui::FormUserList* ui;

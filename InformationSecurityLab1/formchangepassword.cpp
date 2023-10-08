@@ -2,6 +2,8 @@
 #include "ui_formchangepassword.h"
 #include "userservice.h"
 
+#include <FileService.h>
+#include <User.h>
 #include <qmessagebox.h>
 
 FormChangePassword::FormChangePassword(QWidget* parent)
@@ -18,6 +20,14 @@ FormChangePassword::~FormChangePassword()
 
 void FormChangePassword::on_pushButton_save_clicked()
 {
+    User foundUser = FileService::GetUserByName(ui->lineEdit_user->text());
+
+    if (!UserService::CheckPassword(ui->lineEdit_oldPass->text(), foundUser.EncryptedPassword)
+        && !foundUser.EncryptedPassword.isEmpty())
+    {
+        QMessageBox::critical(this, "Not valid pass", "Not valid pass");
+        return;
+    }
     if (!UserService::VerifyPassword(ui->lineEdit_newPass->text()))
     {
         QMessageBox::warning(this, "Not valid pass", "Use only alphabet and digint");

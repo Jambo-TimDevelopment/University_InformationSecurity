@@ -76,10 +76,9 @@ void FileService::SaveUsersToFile(QString fileName, QList<User> list, QString pa
 {
     QFile* fileWithUsers = new QFile(fileName);
 
-    if (!fileWithUsers->exists())
+    if (fileWithUsers->exists())
     {
-        qDebug() << "File not exist";
-        return;
+        fileWithUsers->remove();
     }
 
     if (!fileWithUsers->open(QIODevice::WriteOnly))

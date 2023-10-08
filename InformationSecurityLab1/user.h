@@ -20,6 +20,11 @@ struct User
         LimitPassword = newLimitPassword;
     }
 
+    bool operator==(const User& counter) const
+    {
+        return this->Login == counter.Login;
+    }
+
     QString Login;
     QString EncryptedPassword;
     bool Blocked;
