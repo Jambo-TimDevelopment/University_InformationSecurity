@@ -18,11 +18,17 @@ SOURCES += \
     formuserlist.cpp \
     main.cpp \
     passphrase.cpp \
+    qaesencryption.cpp \
     user.cpp \
+    userlist.cpp \
     userservice.cpp
 
 HEADERS += \
     Utilities.h \
+    aesni/aesni-enc-cbc.h \
+    aesni/aesni-enc-ecb.h \
+    aesni/aesni-key-exp.h \
+    aesni/aesni-key-init.h \
     fileservice.h \
     formaboutprogram.h \
     formauthorisation.h \
@@ -31,7 +37,9 @@ HEADERS += \
     formmainwindowclient.h \
     formuserlist.h \
     passphrase.h \
+    qaesencryption.h \
     user.h \
+    userlist.h \
     userservice.h
 
 FORMS += \

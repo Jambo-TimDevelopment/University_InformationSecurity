@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QFile>
 #include <QLabel>
+#include <UserList.h>
 
 int main(int argc, char* argv[])
 {
@@ -13,6 +14,12 @@ int main(int argc, char* argv[])
         QFile fileWithUsers(SecurityManager().FILE_NAME_WITH_USERS);
         if (fileWithUsers.open(QIODevice::WriteOnly))
         {
+            /*QDataStream stream(&fileWithUsers);
+            QList<User>* list = new QList<User>();
+            list->append(User("ADMIN"));
+            UserList* userList = new UserList(*list);
+            stream << userList;*/
+
             fileWithUsers.write("ADMIN");
             fileWithUsers.close();
         }
@@ -23,6 +30,23 @@ int main(int argc, char* argv[])
 
         if (fileWithUsers.open(QIODevice::ReadWrite))
         {
+            /*UserList* userList;
+            QDataStream stream(&fileWithUsers);
+
+            stream << userList;
+
+            if (userList->Data.isEmpty())
+            {
+                QDataStream stream(&fileWithUsers);
+                QList<User>* list = new QList<User>();
+                list->append(User("ADMIN"));
+                UserList* userList = new UserList(*list);
+                stream << userList;
+
+                // fileWithUsers.write("ADMIN");
+                fileWithUsers.close();
+            }*/
+
             QByteArray block = fileWithUsers.readAll();
 
             QString stringFromFile = QString::fromUtf8(block.toStdString().c_str());

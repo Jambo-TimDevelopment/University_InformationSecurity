@@ -1,10 +1,10 @@
 #include "userservice.h"
 #include "Utilities.h"
-#include "fileservice.h"
 
 #include <QCryptographicHash>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <User.h>
 
 bool UserService::SetNewPassword(QString newPassword)
 {
@@ -12,7 +12,7 @@ bool UserService::SetNewPassword(QString newPassword)
     SecurityManager* securityManager = new SecurityManager();
     QList<User> newUserList = QList<User>(securityManager->USER_LIST.length());
     int k = 0;
-    for (User user : securityManager->USER_LIST)
+    for (User& user : securityManager->USER_LIST)
     {
         newUserList[k].Login = user.Login;
         newUserList[k].EncryptedPassword = user.EncryptedPassword;

@@ -5,6 +5,7 @@
 #include "ui_formauthorisation.h"
 #include "userservice.h"
 
+#include <User.h>
 #include <FileService.h>
 #include <QMessageBox>
 

@@ -2,33 +2,26 @@
 #define USER_H
 
 #include <qstring.h>
+#include <QDataStream>
+#include <QList>
 
-struct User
+class User
 {
-    User() {}
+public:
+    User();
 
-    User(QString newLogin)
-    {
-        Login = newLogin;
-    }
+    User(QString newLogin);
 
-    User(QString newLogin, QString newEncryptedPassword, bool newBlocked, bool newLimitPassword)
-    {
-        Login = newLogin;
-        EncryptedPassword = newEncryptedPassword;
-        Blocked = newBlocked;
-        LimitPassword = newLimitPassword;
-    }
+    User(QString newLogin, QString newEncryptedPassword, bool newBlocked, bool newLimitPassword);
 
-    bool operator==(const User& counter) const
-    {
-        return this->Login == counter.Login;
-    }
+    bool operator==(const User& counter) const;
 
     QString Login;
     QString EncryptedPassword;
     bool Blocked;
     bool LimitPassword = true;
+
+    friend QDataStream& operator>>(QDataStream& d, User& u);
 };
 
 #endif // USER_H

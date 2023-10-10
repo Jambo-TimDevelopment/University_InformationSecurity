@@ -43,7 +43,7 @@ public:
     static User GetUserByName(QString name);
 
     static void SaveUsersToFile(QString fileName, QList<User> list, QString passPhrase);
-    
+
     static QString ConverUserListToString(QList<User> userList);
     /*void SaveUsersFile(List<User> list, string passPhrase)
     {

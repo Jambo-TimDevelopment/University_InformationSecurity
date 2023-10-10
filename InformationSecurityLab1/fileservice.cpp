@@ -1,9 +1,11 @@
-#include "Utilities.h"
 #include "fileservice.h"
+#include "Utilities.h"
 
 #include <QFile>
 #include <QList>
 #include <QMessageBox>
+#include <QDataStream>
+#include <UserList.h>
 
 FileService::FileService() {}
 
@@ -12,12 +14,12 @@ QList<User> FileService::GetUsersFromFile(QString fileName, QString passPhrase)
 {
     QFile* fileWithUsers = new QFile(fileName);
 
-    QList<User> userList = QList<User>();
+    QList<User> outUserList = QList<User>();
 
     if (!fileWithUsers->exists())
     {
         qDebug() << "File not exist";
-        return userList;
+        return outUserList;
     }
 
     if (!fileWithUsers->open(QIODevice::ReadOnly))
@@ -51,11 +53,18 @@ QList<User> FileService::GetUsersFromFile(QString fileName, QString passPhrase)
 
         if (newUser != nullptr)
         {
-            userList.append(*newUser);
+            outUserList.append(*newUser);
         }
     }
 
-    return userList;
+    /*UserList userList;
+    QDataStream stream(&*fileWithUsers);
+
+    stream >> userList;
+
+    outUserList = userList.Data;*/
+
+    return outUserList;
 }
 
 User FileService::GetUserByName(QString name)
@@ -74,23 +83,32 @@ User FileService::GetUserByName(QString name)
 
 void FileService::SaveUsersToFile(QString fileName, QList<User> list, QString passPhrase)
 {
-    QFile* fileWithUsers = new QFile(fileName);
+    QFile fileWithUsers = QFile(fileName);
 
-    if (fileWithUsers->exists())
+    if (fileWithUsers.exists())
     {
-        fileWithUsers->remove();
+        fileWithUsers.remove();
     }
 
-    if (!fileWithUsers->open(QIODevice::WriteOnly))
+    QFile newFileWithUsers = QFile(fileName);
+    if (!newFileWithUsers.open(QIODevice::WriteOnly))
     {
         qDebug() << "Error when open file";
     }
 
     // TODO make loading data to file
     QString str = FileService::ConverUserListToString(list);
-    QTextStream writeStream(&*fileWithUsers);
+    QTextStream writeStream(&newFileWithUsers);
     writeStream << str;
-    fileWithUsers->close();
+    newFileWithUsers.close();
+
+    /*QDataStream stream(&fileWithUsers);
+
+    fileWithUsers.open(QIODevice::WriteOnly);
+
+    UserList* userList = new UserList(list);
+    stream << userList;
+    fileWithUsers.close();*/
 }
 
 QString FileService::ConverUserListToString(QList<User> userList)

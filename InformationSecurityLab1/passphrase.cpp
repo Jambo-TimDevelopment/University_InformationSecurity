@@ -3,6 +3,8 @@
 #include "fileservice.h"
 #include "formauthorisation.h"
 #include "ui_passphrase.h"
+
+#include <User.h>
 #include <QMessageBox>
 #include <qfile.h>
 

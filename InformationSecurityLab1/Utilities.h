@@ -6,8 +6,9 @@
 #include <qstring.h>
 #include <QList>
 #include <qfile.h>
-#include <User.h>
 #include <FileService.h>
+
+class User;
 
 class SecurityManager
 {

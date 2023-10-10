@@ -2,6 +2,7 @@
 #include "formuserlist.h"
 #include "ui_formuserlist.h"
 
+#include <User.h>
 #include <qmessagebox.h>
 
 FormUserList::FormUserList(QWidget* parent)
