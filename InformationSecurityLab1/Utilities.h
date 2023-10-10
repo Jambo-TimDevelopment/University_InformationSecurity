@@ -15,7 +15,7 @@ class SecurityManager
 public:
     SecurityManager()
     {
-        QFile* tmpFile = new QFile("C:/University/4Course/IS/tmpFile.txt");
+        QFile* tmpFile = new QFile(TMP_FILE);
 
         // QList<User> userList = QList<User>();
 
@@ -69,7 +69,8 @@ public:
         USER_LIST = FileService::GetUsersFromFile(FILE_NAME_WITH_USERS, "");
     }
 
-    const QString FILE_NAME_WITH_USERS = "C:/University/4Course/IS/FileWithUsers.txt";
+    const QString FILE_NAME_WITH_USERS = "C:/University/4Course/IS/FileWithUsers.dat";
+    const QString TMP_FILE = "C:/University/4Course/IS/tmpFile.txt";
 
     QString PASS_PHRASE; // 0
     QString USER_NAME;   // 1

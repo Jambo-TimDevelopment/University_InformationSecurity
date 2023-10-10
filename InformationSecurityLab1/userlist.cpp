@@ -1,18 +1,5 @@
 #include "userlist.h"
 
-// Export
-QDataStream& operator<<(QDataStream& out, const UserList& ul)
-{
-    out << ul.Data.length();
-    for (User entry : ul.Data)
-    {
-        out << &entry;
-    }
-
-    return out;
-}
-
-// Import
 QDataStream& operator>>(QDataStream& in, UserList& ul)
 {
     int nrEntries;
@@ -24,4 +11,15 @@ QDataStream& operator>>(QDataStream& in, UserList& ul)
         ul.Data.append(newEntry);
     }
     return in;
+}
+
+QDataStream& operator<<(QDataStream& out, const UserList& ul)
+{
+    out << ul.Data.length() + 1;
+    for (User entry : ul.Data)
+    {
+        out << &entry;
+    }
+
+    return out;
 }

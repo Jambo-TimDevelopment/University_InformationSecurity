@@ -16,6 +16,8 @@ public:
 
     bool operator==(const User& counter) const;
 
+    bool operator!=(const User& counter) const;
+
     QString Login;
     QString EncryptedPassword;
     bool Blocked;
@@ -23,5 +25,11 @@ public:
 
     friend QDataStream& operator>>(QDataStream& d, User& u);
 };
+
+QDataStream& operator<<(QDataStream& d, const User& u);
+
+QDataStream& operator>>(QDataStream& d, User& u);
+
+QDebug operator<<(QDebug d, const User& u);
 
 #endif // USER_H

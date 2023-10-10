@@ -9,60 +9,95 @@
 
 FileService::FileService() {}
 
+void FileService::SetupUserListFile()
+{
+    SecurityManager securityManager = SecurityManager();
+
+    QFile* tmpFile = new QFile(securityManager.TMP_FILE);
+    tmpFile->remove();
+
+    QFile fileWithUsers(securityManager.FILE_NAME_WITH_USERS);
+
+    if (!fileWithUsers.exists(securityManager.FILE_NAME_WITH_USERS))
+    {
+        fileWithUsers.open(QIODevice::WriteOnly);
+        fileWithUsers.close();
+
+        if (fileWithUsers.open(QIODevice::WriteOnly))
+        {
+            QDataStream stream(&fileWithUsers);
+            QList<User> list = QList<User>();
+            list.append(User("ADMIN"));
+            UserList userList = UserList(list);
+            stream << userList;
+            fileWithUsers.close();
+        }
+    }
+    else
+    {
+        if (fileWithUsers.open(QIODevice::ReadOnly))
+        {
+            UserList userList;
+            QDataStream stream(&fileWithUsers);
+
+            stream >> userList;
+            fileWithUsers.close();
+
+            if ((userList.Data.isEmpty() || userList.Data[0] != User("ADMIN")) && fileWithUsers.open(QIODevice::WriteOnly))
+            {
+                QDataStream stream(&fileWithUsers);
+                QList<User> ListOfUsers = QList<User>();
+                ListOfUsers.append(User("ADMIN"));
+
+                stream << ListOfUsers;
+                fileWithUsers.close();
+            }
+        }
+    }
+}
+
 // Getting user list from file
 QList<User> FileService::GetUsersFromFile(QString fileName, QString passPhrase)
 {
-    QFile* fileWithUsers = new QFile(fileName);
+    QFile fileWithUsers = QFile(fileName);
 
     QList<User> outUserList = QList<User>();
 
-    if (!fileWithUsers->exists())
+    if (!fileWithUsers.exists())
     {
         qDebug() << "File not exist";
         return outUserList;
     }
 
-    if (!fileWithUsers->open(QIODevice::ReadOnly))
+    if (!fileWithUsers.open(QIODevice::ReadOnly))
     {
         qDebug() << "Error when open file";
     }
 
-    QByteArray block = fileWithUsers->readAll();
-    fileWithUsers->close();
-
-    QString stringFromFile = QString::fromUtf8(block.toStdString().c_str());
-
-    QStringList stringsWithUsers = stringFromFile.split("\n");
-    for (QString userString : stringsWithUsers)
-    {
-        if (userString.isEmpty())
-        {
-            continue;
-        }
-
-        User* newUser = nullptr;
-        QStringList userProperties = userString.split(" ");
-        if (userProperties.length() > 1)
-        {
-            newUser = new User(userProperties[0], userProperties[1], userProperties[2] == "true", userProperties[3] == "true");
-        }
-        else if (userProperties.length() == 1)
-        {
-            newUser = new User(userProperties[0]);
-        }
-
-        if (newUser != nullptr)
-        {
-            outUserList.append(*newUser);
-        }
-    }
-
-    /*UserList userList;
-    QDataStream stream(&*fileWithUsers);
+    UserList userList;
+    QDataStream stream(&fileWithUsers);
 
     stream >> userList;
 
-    outUserList = userList.Data;*/
+    outUserList = userList.Data;
+    fileWithUsers.close();
+
+    // Test
+    {
+        if (fileWithUsers.open(QIODevice::ReadOnly))
+        {
+            qDebug() << "FileService::GetUsersFromFile";
+            QDataStream stream(&fileWithUsers);
+            UserList TestUserList = UserList();
+            stream >> TestUserList;
+            fileWithUsers.close();
+            qDebug() << "Length" << TestUserList.Data.length();
+            for (User user : TestUserList.Data)
+            {
+                qDebug() << user;
+            }
+        }
+    }
 
     return outUserList;
 }
@@ -85,42 +120,29 @@ void FileService::SaveUsersToFile(QString fileName, QList<User> list, QString pa
 {
     QFile fileWithUsers = QFile(fileName);
 
-    if (fileWithUsers.exists())
+    if (fileWithUsers.open(QIODevice::WriteOnly))
     {
-        fileWithUsers.remove();
+        QDataStream stream(&fileWithUsers);
+        QList<User> ListOfUsers = QList<User>();
+        ListOfUsers.append(list);
+
+        stream << ListOfUsers;
+        fileWithUsers.close();
     }
 
-    QFile newFileWithUsers = QFile(fileName);
-    if (!newFileWithUsers.open(QIODevice::WriteOnly))
+    // Test
+    if (fileWithUsers.open(QIODevice::ReadOnly))
     {
-        qDebug() << "Error when open file";
+        qDebug() << "FileService::SaveUsersToFile:";
+        QDataStream stream(&fileWithUsers);
+        QList<User> list = QList<User>();
+        UserList userList = UserList(list);
+        stream >> userList;
+        fileWithUsers.close();
+        qDebug() << "Length" << userList.Data.length();
+        for (User user : userList.Data)
+        {
+            qDebug() << user;
+        }
     }
-
-    // TODO make loading data to file
-    QString str = FileService::ConverUserListToString(list);
-    QTextStream writeStream(&newFileWithUsers);
-    writeStream << str;
-    newFileWithUsers.close();
-
-    /*QDataStream stream(&fileWithUsers);
-
-    fileWithUsers.open(QIODevice::WriteOnly);
-
-    UserList* userList = new UserList(list);
-    stream << userList;
-    fileWithUsers.close();*/
-}
-
-QString FileService::ConverUserListToString(QList<User> userList)
-{
-    QString outString = "";
-    for (User user : userList)
-    {
-        outString += user.Login + " ";
-        outString += user.EncryptedPassword + " ";
-        outString += user.Blocked ? "true " : "flase ";
-        outString += user.LimitPassword ? "true " : "flase ";
-        outString += "\n";
-    }
-    return outString;
 }

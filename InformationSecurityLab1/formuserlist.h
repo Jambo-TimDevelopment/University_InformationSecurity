@@ -1,7 +1,10 @@
 #ifndef FORMUSERLIST_H
 #define FORMUSERLIST_H
 #pragma once
+#include "Utilities.h"
+
 #include <QDialog>
+#include <User.h>
 
 namespace Ui
 {
@@ -21,6 +24,10 @@ private slots:
 
 private:
     Ui::FormUserList* ui;
+
+    SecurityManager* securityManager;
+    QList<User> userList;
+    void UpdateUserList();
 };
 
 #endif // FORMUSERLIST_H

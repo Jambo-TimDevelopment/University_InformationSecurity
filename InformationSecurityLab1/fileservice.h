@@ -18,6 +18,8 @@ public:
     FileService();
 
 public:
+    static void SetupUserListFile();
+
     static QList<User> GetUsersFromFile(QString fileName, QString passPhrase);
     /*List<User> LoadUsersFile(string passPhrase)
     {
@@ -44,7 +46,6 @@ public:
 
     static void SaveUsersToFile(QString fileName, QList<User> list, QString passPhrase);
 
-    static QString ConverUserListToString(QList<User> userList);
     /*void SaveUsersFile(List<User> list, string passPhrase)
     {
         byte[] bytes = SerializeUserList(list);

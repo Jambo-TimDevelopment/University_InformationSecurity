@@ -24,6 +24,7 @@ FormAuthorisation::~FormAuthorisation()
 void FormAuthorisation::on_pushButton_enter_clicked()
 {
     // TODO load users from file and get user pass by user name, chek pass
+    SecurityManager* securityManager = new SecurityManager();
     User foundUser = FileService::GetUserByName(ui->lineEdit_login->text());
 
     if (!UserService::CheckPassword(ui->lineEdit_pass->text(), foundUser.EncryptedPassword)
@@ -33,7 +34,6 @@ void FormAuthorisation::on_pushButton_enter_clicked()
         return;
     }
 
-    SecurityManager* securityManager = new SecurityManager();
     securityManager->setUSER_NAME(ui->lineEdit_login->text());
     securityManager->setUSER_PASS(ui->lineEdit_pass->text());
 
