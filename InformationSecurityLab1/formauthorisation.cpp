@@ -25,7 +25,13 @@ void FormAuthorisation::on_pushButton_enter_clicked()
 {
     // TODO load users from file and get user pass by user name, chek pass
     SecurityManager* securityManager = new SecurityManager();
-    User foundUser = FileService::GetUserByName(ui->lineEdit_login->text());
+    User foundUser;
+
+    if (!FileService::FindUserByName(ui->lineEdit_login->text(), foundUser))
+    {
+        QMessageBox::critical(this, "User is blocked", "User" + ui->lineEdit_login->text() + "is blocked");
+        return;
+    }
 
     if (!UserService::CheckPassword(ui->lineEdit_pass->text(), foundUser.EncryptedPassword)
         && !foundUser.EncryptedPassword.isEmpty())

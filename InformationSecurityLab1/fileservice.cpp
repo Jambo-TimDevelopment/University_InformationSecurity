@@ -1,119 +1,118 @@
 #include "fileservice.h"
 #include "Utilities.h"
+#include "QAESEncryption.h"
 
 #include <QFile>
 #include <QList>
 #include <QMessageBox>
 #include <QDataStream>
 #include <UserList.h>
+#include <QCryptographicHash>
+
+#include <bits/functional_hash.h>
 
 FileService::FileService() {}
 
-void FileService::SetupUserListFile()
+void FileService::PrintDebugInformation(QString functionName)
 {
     SecurityManager securityManager = SecurityManager();
-
-    QFile* tmpFile = new QFile(securityManager.TMP_FILE);
-    tmpFile->remove();
-
     QFile fileWithUsers(securityManager.FILE_NAME_WITH_USERS);
-
-    if (!fileWithUsers.exists(securityManager.FILE_NAME_WITH_USERS))
+    if (fileWithUsers.open(QIODevice::ReadOnly))
     {
-        fileWithUsers.open(QIODevice::WriteOnly);
+        qDebug() << "\n " + functionName;
+        QDataStream stream(&fileWithUsers);
+        QList<User> list = QList<User>();
+        UserList userList = UserList(list);
+        stream >> userList;
         fileWithUsers.close();
-
-        if (fileWithUsers.open(QIODevice::WriteOnly))
+        qDebug() << "Length" << userList.Data.length();
+        for (User& user : userList.Data)
         {
-            QDataStream stream(&fileWithUsers);
-            QList<User> list = QList<User>();
-            list.append(User("ADMIN"));
-            UserList userList = UserList(list);
-            stream << userList;
-            fileWithUsers.close();
-        }
-    }
-    else
-    {
-        if (fileWithUsers.open(QIODevice::ReadOnly))
-        {
-            UserList userList;
-            QDataStream stream(&fileWithUsers);
-
-            stream >> userList;
-            fileWithUsers.close();
-
-            if ((userList.Data.isEmpty() || userList.Data[0] != User("ADMIN")) && fileWithUsers.open(QIODevice::WriteOnly))
-            {
-                QDataStream stream(&fileWithUsers);
-                QList<User> ListOfUsers = QList<User>();
-                ListOfUsers.append(User("ADMIN"));
-
-                stream << ListOfUsers;
-                fileWithUsers.close();
-            }
+            qDebug() << user;
         }
     }
 }
 
-// Getting user list from file
-QList<User> FileService::GetUsersFromFile(QString fileName, QString passPhrase)
+QList<User> FileService::GetUsersFromFile_Internal(QString fileName)
 {
-    QFile fileWithUsers = QFile(fileName);
 
+    QFile fileWithUsers = QFile(fileName);
     QList<User> outUserList = QList<User>();
 
     if (!fileWithUsers.exists())
     {
-        qDebug() << "File not exist";
+        qDebug() << "\nFile not exist";
         return outUserList;
     }
 
     if (!fileWithUsers.open(QIODevice::ReadOnly))
     {
         qDebug() << "Error when open file";
+        return outUserList;
     }
 
     UserList userList;
     QDataStream stream(&fileWithUsers);
-
     stream >> userList;
-
     outUserList = userList.Data;
     fileWithUsers.close();
 
-    // Test
-    {
-        if (fileWithUsers.open(QIODevice::ReadOnly))
-        {
-            qDebug() << "FileService::GetUsersFromFile";
-            QDataStream stream(&fileWithUsers);
-            UserList TestUserList = UserList();
-            stream >> TestUserList;
-            fileWithUsers.close();
-            qDebug() << "Length" << TestUserList.Data.length();
-            for (User user : TestUserList.Data)
-            {
-                qDebug() << user;
-            }
-        }
-    }
+    FileService::PrintDebugInformation("FileService::GetUsersFromFile");
 
     return outUserList;
 }
 
-User FileService::GetUserByName(QString name)
+void FileService::SetupUserListFile(QString passPhrase)
 {
-    QList<User> userList = GetUsersFromFile(SecurityManager().FILE_NAME_WITH_USERS, "");
+    SecurityManager securityManager = SecurityManager();
 
-    for (User user : userList)
+    QFile fileWithUsers(securityManager.FILE_NAME_WITH_USERS);
+
+    if (!fileWithUsers.exists(securityManager.FILE_NAME_WITH_USERS))
+    {
+        FileService::AddUserToFile(securityManager.FILE_NAME_WITH_USERS, User("ADMIN"), passPhrase);
+    }
+    else
+    {
+        User adminUser;
+        if (!FileService::FindUserByName("ADMIN", adminUser))
+        {
+            FileService::AddUserToFile(securityManager.FILE_NAME_WITH_USERS, User("ADMIN"), passPhrase);
+        }
+    }
+
+    FileService::PrintDebugInformation("FileService::SetupUserListFile");
+}
+
+// Getting user list from file
+QList<User> FileService::GetUsersFromFile(QString fileName, QString passPhrase)
+{
+    FileService::DecryptFile(fileName, passPhrase);
+
+    return FileService::GetUsersFromFile_Internal(fileName);
+}
+
+bool FileService::FindUserByName(QString name, User& foundUser)
+{
+    SecurityManager securityManager = SecurityManager();
+    QList<User> userList = GetUsersFromFile(securityManager.FILE_NAME_WITH_USERS, securityManager.PASS_PHRASE);
+
+    for (User& user : userList)
     {
         if (user.Login == name)
         {
-            return user;
+            foundUser = user;
+            return true;
         }
     }
-    return User();
+    return false;
+}
+
+void FileService::AddUserToFile(QString fileName, User newUser, QString passPhrase)
+{
+    QList<User> list = QList<User>();
+    list.append(newUser);
+    FileService::SaveUsersToFile(fileName, list, passPhrase);
 }
 
 void FileService::SaveUsersToFile(QString fileName, QList<User> list, QString passPhrase)
@@ -130,19 +129,74 @@ void FileService::SaveUsersToFile(QString fileName, QList<User> list, QString pa
         fileWithUsers.close();
     }
 
-    // Test
-    if (fileWithUsers.open(QIODevice::ReadOnly))
+    FileService::PrintDebugInformation("FileService::SaveUsersToFile");
+    FileService::EncryptFile(fileName, passPhrase);
+
+    fileWithUsers.remove();
+}
+
+void FileService::EncryptFile(QString fileName, QString passPhrase)
+{
+    if (passPhrase.isEmpty())
     {
-        qDebug() << "FileService::SaveUsersToFile:";
-        QDataStream stream(&fileWithUsers);
-        QList<User> list = QList<User>();
-        UserList userList = UserList(list);
-        stream >> userList;
+        return;
+    }
+
+    QFile fileWithUsers(fileName);
+    QByteArray input;
+    if (fileWithUsers.open(QFile::ReadOnly))
+    {
+        input = fileWithUsers.readAll();
+    }
+
+    QByteArray iv;
+    quint8 iv_16[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+    for (int i = 0; i < 16; i++)
+    {
+        iv.append(iv_16[i]);
+    }
+
+    QByteArray hashKey = QCryptographicHash::hash(passPhrase.toLocal8Bit(), QCryptographicHash::Sha256);
+    QAESEncryption encryption(QAESEncryption::AES_256, QAESEncryption::CFB);
+    QByteArray encodeData = encryption.encode(input, hashKey, iv);
+
+    QFile encryptedFileWithUsers = QFile(SecurityManager().ENCRYPTED_FILE_WITH_USERS);
+    if (encryptedFileWithUsers.open(QFile::WriteOnly))
+    {
+        encryptedFileWithUsers.write(encodeData);
+        encryptedFileWithUsers.close();
+    }
+}
+
+void FileService::DecryptFile(QString fileName, QString passPhrase)
+{
+    if (passPhrase.isEmpty())
+    {
+        return;
+    }
+
+    QFile encryptedFileWithUsers = QFile(SecurityManager().ENCRYPTED_FILE_WITH_USERS);
+    QByteArray input;
+    if (encryptedFileWithUsers.open(QFile::ReadOnly))
+    {
+        input = encryptedFileWithUsers.readAll();
+    }
+
+    QByteArray iv;
+    quint8 iv_16[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+    for (int i = 0; i < 16; i++)
+    {
+        iv.append(iv_16[i]);
+    }
+
+    QByteArray hashKey = QCryptographicHash::hash(passPhrase.toLocal8Bit(), QCryptographicHash::Sha256);
+    QAESEncryption encryption(QAESEncryption::AES_256, QAESEncryption::CFB);
+    QByteArray decodedText = encryption.removePadding(encryption.decode(input, hashKey, iv));
+
+    QFile fileWithUsers(fileName);
+    if (fileWithUsers.open(QFile::WriteOnly))
+    {
+        fileWithUsers.write(decodedText);
         fileWithUsers.close();
-        qDebug() << "Length" << userList.Data.length();
-        for (User user : userList.Data)
-        {
-            qDebug() << user;
-        }
     }
 }

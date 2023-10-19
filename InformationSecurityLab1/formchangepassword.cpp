@@ -20,7 +20,13 @@ FormChangePassword::~FormChangePassword()
 
 void FormChangePassword::on_pushButton_save_clicked()
 {
-    User foundUser = FileService::GetUserByName(ui->lineEdit_user->text());
+    User foundUser;
+
+    if (!FileService::FindUserByName(ui->lineEdit_user->text(), foundUser))
+    {
+        QMessageBox::critical(this, "Invalid user name", "Invalid user name");
+        return;
+    }
 
     if (!UserService::CheckPassword(ui->lineEdit_oldPass->text(), foundUser.EncryptedPassword)
         && !foundUser.EncryptedPassword.isEmpty())
@@ -28,6 +34,7 @@ void FormChangePassword::on_pushButton_save_clicked()
         QMessageBox::critical(this, "Not valid pass", "Not valid pass");
         return;
     }
+
     if (!UserService::VerifyPassword(ui->lineEdit_newPass->text()))
     {
         QMessageBox::warning(this, "Not valid pass", "Use only alphabet and digint");

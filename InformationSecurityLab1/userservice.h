@@ -12,11 +12,9 @@ public:
 
     static bool CheckPassword(QString password, QString oldPassword);
 
-public:
-    static bool VerifyPassword(QString password);
-
-private:
     static QString Hash(QString password);
+
+    static bool VerifyPassword(QString password);
 };
 
 #endif // USERSERVICE_H

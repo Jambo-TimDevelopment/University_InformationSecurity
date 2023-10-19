@@ -2,13 +2,15 @@
 #include "formuserlist.h"
 #include "ui_formuserlist.h"
 
+#include <FormAddUser.h>
 #include <QStringListModel>
 #include <User.h>
 #include <qmessagebox.h>
 
 void FormUserList::UpdateUserList()
 {
-    userList = FileService::GetUsersFromFile(securityManager->FILE_NAME_WITH_USERS, "");
+    SecurityManager* securityManager = new SecurityManager();
+    QList<User> userList = FileService::GetUsersFromFile(securityManager->FILE_NAME_WITH_USERS, "");
 
     ui->tableWidget->setRowCount(userList.length());
     for (int i = 0; i < userList.length(); i++)
@@ -25,7 +27,6 @@ FormUserList::FormUserList(QWidget* parent)
 {
     ui->setupUi(this);
 
-    securityManager = new SecurityManager();
     UpdateUserList();
 }
 
@@ -36,14 +37,8 @@ FormUserList::~FormUserList()
 
 void FormUserList::on_pushButton_clicked()
 {
+    FormAddUser* formAddUser = new FormAddUser(this);
+    formAddUser->show();
 
-    User newUser = User(ui->lineEdit->text());
-    if (userList.contains(newUser))
-    {
-        QMessageBox::critical(this, "Not unique name", "Not unique name");
-        return;
-    }
-    userList.push_back(newUser);
-    FileService::SaveUsersToFile(securityManager->FILE_NAME_WITH_USERS, userList, "");
-    hide();
+    UpdateUserList();
 }

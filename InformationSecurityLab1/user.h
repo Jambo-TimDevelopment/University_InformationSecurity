@@ -4,6 +4,7 @@
 #include <qstring.h>
 #include <QDataStream>
 #include <QList>
+#include <QDateTime>
 
 class User
 {
@@ -12,7 +13,8 @@ public:
 
     User(QString newLogin);
 
-    User(QString newLogin, QString newEncryptedPassword, bool newBlocked, bool newLimitPassword);
+    User(QString newLogin, QString newEncryptedPassword,
+        bool newBlocked, bool newLimitPassword);
 
     bool operator==(const User& counter) const;
 
@@ -22,6 +24,9 @@ public:
     QString EncryptedPassword;
     bool Blocked;
     bool LimitPassword = true;
+    int MinPassLength = 0;
+    int PassExpirationMonths = 1;
+    QDateTime LastPassChange;
 
     friend QDataStream& operator>>(QDataStream& d, User& u);
 };

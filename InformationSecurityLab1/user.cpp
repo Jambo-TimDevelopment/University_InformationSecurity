@@ -17,6 +17,7 @@ User::User(QString newLogin, QString newEncryptedPassword, bool newBlocked, bool
     EncryptedPassword = newEncryptedPassword;
     Blocked = newBlocked;
     LimitPassword = newLimitPassword;
+    LastPassChange = QDateTime::currentDateTime();
 }
 
 bool User::operator==(const User& counter) const

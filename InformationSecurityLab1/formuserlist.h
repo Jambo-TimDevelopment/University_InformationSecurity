@@ -25,8 +25,6 @@ private slots:
 private:
     Ui::FormUserList* ui;
 
-    SecurityManager* securityManager;
-    QList<User> userList;
     void UpdateUserList();
 };
 

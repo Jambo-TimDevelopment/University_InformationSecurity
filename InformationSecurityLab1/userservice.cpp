@@ -8,26 +8,19 @@
 
 bool UserService::SetNewPassword(QString newPassword)
 {
-    bool flag;
-    SecurityManager* securityManager = new SecurityManager();
-    QList<User> newUserList = QList<User>(securityManager->USER_LIST.length());
-    int k = 0;
-    for (User& user : securityManager->USER_LIST)
+    bool flag = false;
+    SecurityManager securityManager = SecurityManager();
+    QList<User> newUserList = FileService::GetUsersFromFile(securityManager.FILE_NAME_WITH_USERS, securityManager.PASS_PHRASE);
+    for (User& user : newUserList)
     {
-        newUserList[k].Login = user.Login;
-        newUserList[k].EncryptedPassword = user.EncryptedPassword;
-        newUserList[k].Blocked = user.Blocked;
-        newUserList[k].LimitPassword = user.LimitPassword;
-
-        if (user.Login == securityManager->USER_NAME)
+        if (user.Login == securityManager.USER_NAME)
         {
-            newUserList[k].EncryptedPassword = UserService::Hash(newPassword);
+            user.EncryptedPassword = UserService::Hash(newPassword);
             flag = true;
         }
-        k++;
     }
 
-    FileService::SaveUsersToFile(SecurityManager().FILE_NAME_WITH_USERS, newUserList, securityManager->PASS_PHRASE);
+    FileService::SaveUsersToFile(securityManager.FILE_NAME_WITH_USERS, newUserList, securityManager.PASS_PHRASE);
 
     return flag;
 }
@@ -40,10 +33,9 @@ bool UserService::CheckPassword(QString password, QString oldPassword)
 
 bool UserService::VerifyPassword(QString password)
 {
-    // Regex(@".*([A-zА-я]+).*|.*([0-9]+).*");
-    QRegularExpression re(R".*(^[A-Za-z0-9]+$).*");
+    static QRegularExpression re(R".*(^[A-Za-z0-9]+$).*");
     QRegularExpressionMatch match = re.match(password);
-    return match.hasMatch(); // true
+    return match.hasMatch();
 }
 
 QString UserService::Hash(QString password)

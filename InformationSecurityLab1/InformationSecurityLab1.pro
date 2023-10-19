@@ -9,8 +9,10 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Utilities.cpp \
     fileservice.cpp \
     formaboutprogram.cpp \
+    formadduser.cpp \
     formauthorisation.cpp \
     formchangepassword.cpp \
     formmainwindowadmin.cpp \
@@ -31,6 +33,7 @@ HEADERS += \
     aesni/aesni-key-init.h \
     fileservice.h \
     formaboutprogram.h \
+    formadduser.h \
     formauthorisation.h \
     formchangepassword.h \
     formmainwindowadmin.h \
@@ -44,6 +47,7 @@ HEADERS += \
 
 FORMS += \
     formaboutprogram.ui \
+    formadduser.ui \
     formauthorisation.ui \
     formchangepassword.ui \
     formmainwindowadmin.ui \
